@@ -1,0 +1,84 @@
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@16.0.0/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+<script type="text/babel">
+    class App extends React.Component {
+        static allItems = [
+            {id: 'a', value: 'apple'},
+            {id: 'o', value: 'orange'},
+            {id: 'g', value: 'grape'},
+            {id: 'p', value: 'pear'},
+        ]
+        state = {items: []}
+
+        // Checks the `allItems` array to see if the id  `a, o, g, p` is present, if not add one of the id/value pair
+        addItem = () => {
+            //function to set a new state with updated array
+            this.setState(({items}) => ({
+                // Accessing `items` array from `state`
+                items: [
+                    // Spread across all items in the `items` array
+                    ...items,
+                    // Searches id/value pairs in `allItems` array from the App component to see if an an existing item
+                    // exists in the `items` array. If not add the first one found to the `items` array.
+                    App.allItems.find(
+                        i => !items.includes(i),
+                    ),
+                ],
+            }))
+        }
+        removeItem = item => {
+            this.setState(({items}) => ({
+                // filters through the `items` array and sets the item it's checking for to `!=== item` or (not an item).
+                // Anything that returns false from the filter() function is removed which in this case is the item being checked.
+                items: items.filter(i => i !== item),
+            }))
+        }
+
+        render() {
+            // Make the items array equal to the state in our App Component
+            const {items} = this.state
+                            // Button is disabled if the length of the `items` array is greater or equal to
+                            // the length of the `allItems` array
+            return (
+                    <div>
+                        <button
+                                disabled={
+                                    items.length >= App.allItems.length
+                                }
+                                onClick={this.addItem}
+                        >
+                            +
+                        </button>
+
+                        {items.map((i, index) => (
+                            // Maps over the items array by each items index.
+                            // The items added to this array have been added from the `addItem` function.
+
+                                            // When running removeItem(). `i` will be the index of the item that the button was clicked on.
+                                <div key={i.id}>
+                                    <button
+
+                                            onClick={() => this.removeItem(i)}
+                                    >
+                                        -
+                                    </button>
+                                    {i.value}:
+                                    <input />
+                                </div>
+                            // `Value` in `{i.value}`comes from the object prop in the `items` array (apple, orange, grape, pear)
+                        ))}
+                    </div>
+            )
+        }
+    }
+
+    ReactDOM.render(
+        // Render the component to the page!
+            <App />,
+        document.getElementById('root'),
+    )
+</script>
+</body>
